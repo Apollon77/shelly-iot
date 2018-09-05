@@ -204,13 +204,13 @@ class ShellyIot extends EventEmitter {
             clearInterval(this.testEmitter);
             this.testEmitter = null;
         }
-        callback && callback(null);
+        callback && process.nextTick(() => callback(null));
     }
 
     // call this with a device ID to get the description
     getDeviceDescription(device, callback) {
         if (dummyDesc[device] && dummyDesc[device].description) {
-            callback && callback(null, dummyDesc[device].description);
+            callback && process.nextTick(() => callback(null, dummyDesc[device].description));
         }
         callback && callback(new Error('device unknown'));
     }
@@ -218,7 +218,7 @@ class ShellyIot extends EventEmitter {
     // call this with a device ID to get the data for one device
     getDeviceStatus(device, callback) {
         if (dummyData[device]) {
-            callback && callback(null, dummyData[device]);
+            callback && process.nextTick(() => callback(null, dummyData[device]));
         }
         callback && callback(new Error('no data'));
     }
@@ -229,7 +229,7 @@ class ShellyIot extends EventEmitter {
             return false;
         }
         devices.forEach((device) => {
-            this.emit('update-status', dummyData[device]);
+            this.emit('update-device-status', device, dummyData[device]);
         });
     }
 
