@@ -183,6 +183,8 @@ const dummyData = {
 class ShellyIot extends EventEmitter {
     // Constructor, call with options object, content tbd :)
     constructor(options) {
+        super();
+
         this.options = options;
 
         this.testEmitter = setInterval(() => {
