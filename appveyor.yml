@@ -1,0 +1,30 @@
+version: 'test-{build}'
+environment:
+  matrix:
+    - nodejs_version: '4'
+    - nodejs_version: '6'
+    - nodejs_version: '8'
+    - nodejs_version: '10'
+platform:
+  - x86
+  - x64
+clone_folder: 'c:\projects\%APPVEYOR_PROJECT_NAME%'
+install:
+  - ps: Start-FileDownload https://github.com/Apollon77/SupportingFiles/raw/master/appveyor/serial/com0com.cer
+  - ps: C:\"Program Files"\"Microsoft SDKs"\Windows\v7.1\Bin\CertMgr.exe /add com0com.cer /s /r localMachine root
+  - ps: C:\"Program Files"\"Microsoft SDKs"\Windows\v7.1\Bin\CertMgr.exe /add com0com.cer /s /r localMachine trustedpublisher
+  - ps: Start-FileDownload https://github.com/Apollon77/SupportingFiles/raw/master/appveyor/serial/setup_com0com_W7_x64_signed.exe
+  - ps: $env:CNC_INSTALL_CNCA0_CNCB0_PORTS="YES"
+  - ps: .\setup_com0com_W7_x64_signed.exe /S
+  - ps: sleep 60
+  - ps: Start-FileDownload https://github.com/Apollon77/SupportingFiles/raw/master/appveyor/serial/com2tcp.exe
+  - ps: 'Install-Product node $env:nodejs_version $env:platform'
+  - git clone -b build-windows --single-branch https://github.com/Apollon77/libmbus.git libmbus
+  - cp config.h libmbus/config.h
+  - npm install --debug
+  - type C:\projects\node-mbus\build\libmbus.vcxproj & exit 0
+test_script:
+  - node --version
+  - npm --version
+  - npm test
+build: 'off'
