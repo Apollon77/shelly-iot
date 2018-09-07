@@ -211,6 +211,7 @@ class ShellyIot extends EventEmitter {
     getDeviceDescription(device, callback) {
         if (dummyDesc[device] && dummyDesc[device].description) {
             callback && process.nextTick(() => callback(null, dummyDesc[device].description));
+            return;
         }
         callback && callback(new Error('device unknown'));
     }
@@ -219,6 +220,7 @@ class ShellyIot extends EventEmitter {
     getDeviceStatus(device, callback) {
         if (dummyData[device]) {
             callback && process.nextTick(() => callback(null, dummyData[device]));
+            return;
         }
         callback && callback(new Error('no data'));
     }
