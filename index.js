@@ -176,7 +176,7 @@ const dummyDesc = {
                 "I": 111,
                 "T": "W",
                 "R": "",
-                "L": 2
+                "L": 0
             }],
             "act": [{
                 "I": 211,
@@ -233,7 +233,7 @@ const dummyDesc = {
         'ip': '192.168.210.198',
         'description': {
             "blk": [{
-                "I": 1,
+                "I": 0,
                 "D": "RGBW"
             }],
             "sen": [{
@@ -442,7 +442,7 @@ const dummyDesc = {
         'ip': '192.168.210.195',
         'description': {
             "blk": [{
-                "I": 1,
+                "I": 0,
                 "D": "RGBW"
             }],
             "sen": [{
