@@ -88,7 +88,7 @@ class ShellyIot extends EventEmitter {
             payload = JSON.parse(payload);
         }
         catch (err) {
-            this.emit('error', err);
+            this.emit('error', err + ' for JSON ' + payload);
             return;
         }
 
@@ -221,7 +221,7 @@ class ShellyIot extends EventEmitter {
                     payload = JSON.parse(payload);
                 }
                 catch (err) {
-                    this.emit('error', err);
+                    this.emit('error', err + ' for JSON ' + payload);
                     return;
                 }
                 this.logger && this.logger('Device description received: ' + JSON.stringify(options) + ' / ' + JSON.stringify(payload));
