@@ -302,7 +302,7 @@ class ShellyIot extends EventEmitter {
     }
 
 
-    controlDevice(deviceId, path, params, callback) {
+    callDevice(deviceId, path, params, callback) {
         if (typeof params === 'function') {
             callback = params;
             params = {};
