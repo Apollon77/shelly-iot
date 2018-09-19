@@ -51,7 +51,6 @@ class ShellyIot extends EventEmitter {
             };
         }
         if (options['3412']) this.knownDevices[deviceId].validity = options['3412'];
-        if (options['3420']) this.knownDevices[deviceId].lastSerial = options['3420'];
 
         if (rsinfo) {
             this.knownDevices[deviceId].ip = rsinfo.address;
@@ -80,11 +79,6 @@ class ShellyIot extends EventEmitter {
             return;
         }
 
-        if (this.knownDevices[deviceId].description && options['3420'] && options['3420'] === this.knownDevices[deviceId].lastSerial) {
-            this.logger && this.logger('CoAP data ignored: ' + JSON.stringify(options));
-            return;
-        }
-
         let payload = req.payload.toString();
         if (!payload.length) {
             this.logger && this.logger('CoAP payload empty: ' + JSON.stringify(options));
@@ -97,6 +91,12 @@ class ShellyIot extends EventEmitter {
             this.emit('error', err);
             return;
         }
+
+        if (this.knownDevices[deviceId].description && options['3420'] && options['3420'] === this.knownDevices[deviceId].lastSerial) {
+            this.logger && this.logger('CoAP data ignored: ' + JSON.stringify(options) + ' / ' + JSON.stringify(payload));
+            return;
+        }
+        if (options['3420']) this.knownDevices[deviceId].lastSerial = options['3420'];
 
         if (this.knownDevices[deviceId].offlineTimer) {
             clearTimeout(this.knownDevices[deviceId].offlineTimer);
@@ -305,13 +305,18 @@ class ShellyIot extends EventEmitter {
     callDevice(deviceId, path, params, callback) {
         if (typeof params === 'function') {
             callback = params;
-            params = {};
+            params = undefined;
         }
-        if (!this.knownDevices[deviceId] || !this.knownDevices[deviceId].ip) {
-            return callback && callback('device unknown');
+        let ip;
+        if (deviceId.includes('#')) {
+            if (!this.knownDevices[deviceId] || !this.knownDevices[deviceId].ip) {
+                return callback && callback('device unknown');
+            }
+            ip = this.knownDevices[deviceId].ip;
         }
-        this.doGet('http://' + this.knownDevices[deviceId].ip + path, params, (data, response) => {
-            if (data && response.statusCOde === 200) {
+        else ip = deviceId;
+        this.doGet('http://' + ip + path, params, (data, response) => {
+            if (data && response.statusCode === 200) {
                 this.logger && this.logger('REST Response ' + JSON.stringify(data));
                 return callback && callback(null, data);
             }
