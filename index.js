@@ -6,627 +6,286 @@
 'use strict';
 
 const EventEmitter = require('events');
+const RestClient = require('node-rest-client').Client;
+const coap = require('coap');
+const Agent = coap.Agent;
 
-
-// For now we use these dummy data :-)
-const dummyDesc = {
-    'SHSEN-1#4B3F9E#1': {
-        'ip': '192.168.0.108',
-        'description': {
-            "blk": [{
-                "I": 1,
-                "D": "sensors"
-            }],
-            "sen": [{
-                "I": 11,
-                "D": "motion",
-                "T": "S",
-                "R": "0/1",
-                "L": 1
-            }, {
-                "I": 22,
-                "D": "charger",
-                "T": "S",
-                "R": "0/1",
-                "L": 1
-            }, {
-                "I": 33,
-                "D": "temperature",
-                "T": "T",
-                "R": "-40/125",
-                "L": 1
-            }, {
-                "I": 44,
-                "D": "humidity",
-                "T": "H",
-                "R": "0/100",
-                "L": 1
-            }, {
-                "I": 66,
-                "D": "lux",
-                "T": "L",
-                "R": "0/1",
-                "L": 1
-            }, {
-                "I": 77,
-                "D": "battery",
-                "T": "H",
-                "R": "0/100",
-                "L": 1
-            }]
-        }
-    },
-    'SHSW-44#06231A#1': {
-        'ip': '192.168.0.102',
-        'description': {
-            "blk": [{
-                "I": 0,
-                "D": "Relay0"
-            }, {
-                "I": 1,
-                "D": "Relay1"
-            }, {
-                "I": 2,
-                "D": "Relay2"
-            }, {
-                "I": 3,
-                "D": "Relay3"
-            }],
-            "sen": [{
-                "I": 111,
-                "T": "W",
-                "R": "0/2650",
-                "L": 0
-            }, {
-                "I": 112,
-                "T": "Switch",
-                "R": "0/1",
-                "L": 0
-            }, {
-                "I": 121,
-                "T": "W",
-                "R": "0/2650",
-                "L": 1
-            }, {
-                "I": 122,
-                "T": "Switch",
-                "R": "0/1",
-                "L": 1
-            }, {
-                "I": 131,
-                "T": "W",
-                "R": "0/2650",
-                "L": 2
-            }, {
-                "I": 132,
-                "T": "Switch",
-                "R": "0/1",
-                "L": 2
-            }, {
-                "I": 141,
-                "T": "W",
-                "R": "0/2650",
-                "L": 3
-            }, {
-                "I": 142,
-                "T": "Switch",
-                "R": "0/1",
-                "L": 3
-            }],
-            "act": [{
-                "I": 211,
-                "D": "Switch",
-                "L": 0,
-                "P": [{
-                    "I": 2011,
-                    "D": "ToState",
-                    "R": "0/1"
-                }]
-            }, {
-                "I": 221,
-                "D": "Switch",
-                "L": 1,
-                "P": [{
-                    "I": 2021,
-                    "D": "ToState",
-                    "R": "0/1"
-                }]
-            }, {
-                "I": 231,
-                "D": "Switch",
-                "L": 2,
-                "P": [{
-                    "I": 2031,
-                    "D": "ToState",
-                    "R": "0/1"
-                }]
-            }, {
-                "I": 241,
-                "D": "Switch",
-                "L": 3,
-                "P": [{
-                    "I": 2041,
-                    "D": "ToState",
-                    "R": "0/1"
-                }]
-            }]
-        }
-    },
-    'SHSW-21#C36A17#1': {
-        'ip': '192.168.210.196',
-        'description': {
-            "blk": [{
-                "I": 0,
-                "D": "Relay0"
-            }, {
-                "I": 1,
-                "D": "Relay1"
-            }],
-            "sen": [{
-                "I": 112,
-                "T": "Switch",
-                "R": "0/1",
-                "L": 0
-            }, {
-                "I": 122,
-                "T": "Switch",
-                "R": "0/1",
-                "L": 1
-            }, {
-                "I": 111,
-                "T": "W",
-                "R": "",
-                "L": 0
-            }],
-            "act": [{
-                "I": 211,
-                "D": "Switch",
-                "L": 0,
-                "P": [{
-                    "I": 2011,
-                    "D": "ToState",
-                    "R": "0/1"
-                }]
-            }, {
-                "I": 221,
-                "D": "Switch",
-                "L": 1,
-                "P": [{
-                    "I": 2021,
-                    "D": "ToState",
-                    "R": "0/1"
-                }]
-            }]
-        }
-    },
-    'SHPLG-1#99CE40#1': {
-        'ip': '192.168.211.38',
-        'description': {
-            "blk": [{
-                "I": 0,
-                "D": "Relay0"
-            }],
-            "sen": [{
-                "I": 111,
-                "T": "W",
-                "R": "",
-                "L": 0
-            }, {
-                "I": 112,
-                "T": "Switch",
-                "R": "0/1",
-                "L": 0
-            }],
-            "act": [{
-                "I": 211,
-                "D": "Switch",
-                "L": 0,
-                "P": [{
-                    "I": 2011,
-                    "D": "ToState",
-                    "R": "0/1"
-                }]
-            }]
-        }
-    },
-    'SHBLB-1#A64707#1': {
-        'ip': '192.168.210.198',
-        'description': {
-            "blk": [{
-                "I": 0,
-                "D": "RGBW"
-            }],
-            "sen": [{
-                "I": 111,
-                "T": "Red",
-                "R": "0/65535",
-                "L": 0
-            }, {
-                "I": 121,
-                "T": "Green",
-                "R": "0/65535",
-                "L": 0
-            }, {
-                "I": 131,
-                "T": "Blue",
-                "R": "0/65535",
-                "L": 0
-            }, {
-                "I": 141,
-                "T": "White",
-                "R": "0/65535",
-                "L": 0
-            }, {
-                "I": 151,
-                "T": "VSwitch",
-                "R": "0/1",
-                "L": 0
-            }],
-            "act": [{
-                "I": 211,
-                "D": "RGBW",
-                "L": 0,
-                "P": [{
-                    "I": 2011,
-                    "T": "Red",
-                    "R": "0/65535"
-                }, {
-                    "I": 2021,
-                    "T": "Green",
-                    "R": "0/65535"
-                }, {
-                    "I": 2031,
-                    "T": "Blue",
-                    "R": "0/65535"
-                }, {
-                    "I": 2041,
-                    "T": "White",
-                    "R": "0/65535"
-                }, {
-                    "I": 2051,
-                    "T": "VSwitch",
-                    "R": "VSwitch",
-                    "P": 0
-                }]
-            }]
-        }
-    },
-    'SHSW-22#A08186#1': {
-        'ip': '192.168.210.51',
-        'description': {
-            "blk": [{
-                "I": 0,
-                "D": "Relay0"
-            }, {
-                "I": 1,
-                "D": "Relay1"
-            }],
-            "sen": [{
-                "I": 111,
-                "T": "W",
-                "R": "0/2650",
-                "L": 0
-            }, {
-                "I": 112,
-                "T": "Switch",
-                "R": "0/1",
-                "L": 0
-            }, {
-                "I": 121,
-                "T": "W",
-                "R": "0/2650",
-                "L": 1
-            }, {
-                "I": 122,
-                "T": "Switch",
-                "R": "0/1",
-                "L": 1
-            }],
-            "act": [{
-                "I": 211,
-                "D": "Switch",
-                "L": 0,
-                "P": [{
-                    "I": 2011,
-                    "D": "ToState",
-                    "R": "0/1"
-                }]
-            }, {
-                "I": 221,
-                "D": "Switch",
-                "L": 1,
-                "P": [{
-                    "I": 2021,
-                    "D": "ToState",
-                    "R": "0/1"
-                }]
-            }]
-        }
-    },
-    'SHSW-1#5B89AE#1': {
-        'ip': '192.168.211.9',
-        'description': {
-            "blk": [{
-                "I": 0,
-                "D": "Relay0"
-            }],
-            "sen": [{
-                "I": 112,
-                "T": "Switch",
-                "R": "0/1",
-                "L": 0
-            }],
-            "act": [{
-                "I": 211,
-                "D": "Switch",
-                "L": 0,
-                "P": [{
-                    "I": 2011,
-                    "D": "ToState",
-                    "R": "0/1"
-                }]
-            }]
-        }
-    },
-    'SH2LED-1#313E09#1': {
-        'ip': '192.168.210.104',
-        'description': {
-            "blk": [{
-                "I": 0,
-                "D": "Channel0"
-            }, {
-                "I": 1,
-                "D": "Channel1"
-            }],
-            "sen": [{
-                "I": 111,
-                "T": "Brightness",
-                "R": "0/100",
-                "L": 0
-            }, {
-                "I": 112,
-                "T": "Switch",
-                "R": "0/1",
-                "L": 0
-            }, {
-                "I": 121,
-                "T": "Brightness",
-                "R": "0/100",
-                "L": 1
-            }, {
-                "I": 122,
-                "T": "Switch",
-                "R": "0/1",
-                "L": 1
-            }],
-            "act": [{
-                "I": 211,
-                "D": "Brightness",
-                "L": 0,
-                "P": [{
-                    "I": 2011,
-                    "D": "Set",
-                    "R": "0/100"
-                }]
-            }, {
-                "I": 212,
-                "D": "Switch",
-                "L": 0,
-                "P": [{
-                    "I": 2012,
-                    "D": "ToState",
-                    "R": "0/1"
-                }]
-            }, {
-                "I": 221,
-                "D": "Brightness",
-                "L": 1,
-                "P": [{
-                    "I": 2021,
-                    "D": "Set",
-                    "R": "0/100"
-                }]
-            }, {
-                "I": 222,
-                "D": "Switch",
-                "L": 1,
-                "P": [{
-                    "I": 2022,
-                    "D": "ToState",
-                    "R": "0/1"
-                }]
-            }]
-        }
-    },
-    'SHRGBWW-01#CCA8AE#1': {
-        'ip': '192.168.210.195',
-        'description': {
-            "blk": [{
-                "I": 0,
-                "D": "RGBW"
-            }],
-            "sen": [{
-                "I": 111,
-                "T": "Red",
-                "R": "0/65535",
-                "L": 0
-            }, {
-                "I": 121,
-                "T": "Green",
-                "R": "0/65535",
-                "L": 0
-            }, {
-                "I": 131,
-                "T": "Blue",
-                "R": "0/65535",
-                "L": 0
-            }, {
-                "I": 141,
-                "T": "White",
-                "R": "0/65535",
-                "L": 0
-            }, {
-                "I": 151,
-                "T": "VSwitch",
-                "R": "0/1",
-                "L": 0
-            }],
-            "act": [{
-                "I": 211,
-                "D": "RGBW",
-                "L": 0,
-                "P": [{
-                    "I": 2011,
-                    "T": "Red",
-                    "R": "0/65535"
-                }, {
-                    "I": 2021,
-                    "T": "Green",
-                    "R": "0/65535"
-                }, {
-                    "I": 2031,
-                    "T": "Blue",
-                    "R": "0/65535"
-                }, {
-                    "I": 2041,
-                    "T": "White",
-                    "R": "0/65535"
-                }, {
-                    "I": 2051,
-                    "T": "VSwitch",
-                    "R": "VSwitch",
-                    "P": 0
-                }]
-            }]
-        }
-    }
-
+Agent.prototype._nextToken = function nextToken() { // Needed Override in coap.Agent because of Shelly bug
+    return new Buffer(0);
 };
-
-const dummyData = {
-    'SHSEN-1#4B3F9E#1': {
-        "G": [
-            [0, 11, 0],
-            [0, 22, 0],
-            [0, 33, 24.585573],
-            [0, 44, 59.905988],
-            [0, 66, 11.688312],
-            [0, 77, 100]
-        ]
-    },
-    'SHSW-44#06231A#1': {
-        "G": [
-            [0, 111, 0.000000],
-            [0, 112, 1],
-            [0, 121, 0.000000],
-            [0, 122, 1],
-            [0, 131, 0.000000],
-            [0, 132, 0],
-            [0, 141, 0.000000],
-            [0, 142, 0]
-        ]
-    },
-    'SHSW-21#C36A17#1': {
-        "G": [
-            [0, 112, 1],
-            [0, 122, 0],
-            [0, 111, 0.000000]
-        ]
-    },
-    'SHPLG-1#99CE40#1': {
-        "G": [
-            [0, 111, 0.000000],
-            [0, 112, 0]
-        ]
-    },
-    'SHBLB-1#A64707#1': {
-        "G": [
-            [0, 111, 227],
-            [0, 121, 1],
-            [0, 131, 255],
-            [0, 141, 0],
-            [0, 151, 1]
-        ]
-    },
-    'SHSW-22#A08186#1': {
-        "G": [
-            [0, 111, 0.000000],
-            [0, 112, 0],
-            [0, 121, 0.000000],
-            [0, 122, 0]
-        ]
-    },
-    'SHSW-1#5B89AE#1': {
-        "G": [
-            [0, 112, 0]
-        ]
-    },
-    'SH2LED-1#313E09#1': {
-        "G": [
-            [0, 111, 89],
-            [0, 112, 0],
-            [0, 121, 65],
-            [0, 122, 0]
-        ]
-    },
-    'SHRGBWW-01#CCA8AE#1': {
-        "G": [
-            [0, 111, 255],
-            [0, 121, 22],
-            [0, 131, 60],
-            [0, 141, 0],
-            [0, 151, 1]
-        ]
-    }
-};
-
 
 class ShellyIot extends EventEmitter {
     // Constructor, call with options object, content tbd :)
     constructor(options) {
         super();
 
-        this.options = options;
+        this.options = options || {};
+        this.logger = this.options.logger;
 
-        this.testEmitter = setInterval(() => {
-            const keys = Object.keys(dummyData);
-            const num = Math.floor(Math.random() * keys);
-            this.requestDeviceStatusUpdates([keys[num]]);
-        }, 60000);
+        this.restClient = new RestClient();
+
+
+        coap.registerOption('Uri-Path', (str) => Buffer.from(str, 'ascii'), (buf) => buf.toString());
+        coap.registerOption(3332, (str) => Buffer.from(str, 'ascii'), (buf) => buf.toString());
+        coap.registerOption(3412, (str) => Buffer.alloc(2).writeUInt16BE(parseInt(str, 10), 0), (buf) => buf.readUInt16BE(0));
+        coap.registerOption(3420, (str) => Buffer.alloc(2).writeUInt16BE(parseInt(str, 10), 0), (buf) => buf.readUInt16BE(0));
+
+        this.knownDevices = {};
+
+        this.coapServer = null;
     }
 
+    initDevice(options, rsinfo) {
+        const deviceId = options['3332'];
+        if (!deviceId) return null;
+
+        if (!this.knownDevices[deviceId]) {
+            this.knownDevices[deviceId] = {
+                'validity': 0,
+                'lastSerial': 0,
+                'offlineTimer': null,
+                'online': false,
+                'ip': '',
+                'port': 0,
+                'description': null
+            };
+        }
+        if (options['3412']) this.knownDevices[deviceId].validity = options['3412'];
+        if (options['3420']) this.knownDevices[deviceId].lastSerial = options['3420'];
+
+        if (rsinfo) {
+            this.knownDevices[deviceId].ip = rsinfo.address;
+            this.knownDevices[deviceId].port = rsinfo.port;
+        }
+        return deviceId;
+    }
+
+    handleDeviceStatus(req, emit, callback) {
+        if (typeof emit === 'function') {
+            callback = emit;
+            emit = false;
+        }
+        const options = {};
+        req.options.forEach((opt) => {
+            if (!options[opt.name]) {
+                options[opt.name] = opt.value;
+            }
+            else {
+                options[opt.name] += '/' + opt.value;
+            }
+        });
+        const deviceId = this.initDevice(options, req.rsinfo);
+        if (!deviceId) {
+            this.logger && this.logger('CoAP data invalid: ' + JSON.stringify(options));
+            return;
+        }
+
+        if (this.knownDevices[deviceId].description && options['3420'] && options['3420'] === this.knownDevices[deviceId].lastSerial) {
+            this.logger && this.logger('CoAP data ignored: ' + JSON.stringify(options));
+            return;
+        }
+
+        let payload = req.payload.toString();
+        if (!payload.length) {
+            this.logger && this.logger('CoAP payload empty: ' + JSON.stringify(options));
+            return;
+        }
+        try {
+            payload = JSON.parse(payload);
+        }
+        catch (err) {
+            this.emit('error', err);
+            return;
+        }
+
+        if (this.knownDevices[deviceId].offlineTimer) {
+            clearTimeout(this.knownDevices[deviceId].offlineTimer);
+            this.knownDevices[deviceId].offlineTimer = null;
+        }
+
+        this.knownDevices[deviceId].online = true;
+
+        this.knownDevices[deviceId].offlineTimer = setTimeout(() => {
+            this.knownDevices[deviceId].online = false;
+            this.emit('device-connection-status', deviceId, false);
+        }, this.knownDevices[deviceId].validity * 1000);
+
+        this.logger && this.logger('CoAP status package received: ' + JSON.stringify(options) + ' / ' + JSON.stringify(payload));
+        if (emit) this.emit('update-device-status', deviceId, payload);
+        if (!this.knownDevices[deviceId].online) this.emit('device-connection-status', deviceId, true);
+        callback && callback(deviceId, payload);
+    }
+
+    listen(callback) {
+        this.coapServer = coap.createServer({
+        	multicastAddress: '224.0.1.187'
+        });
+
+        this.coapServer.on('request', (req, res) => {
+            //this.logger && this.logger(JSON.stringify(req));
+            if (req.url && req.url === '/cit/s' && req.code && req.code === '0.30') {
+                res.end();
+                this.handleDeviceStatus(req, true);
+            }
+        });
+
+        // the default CoAP port is 5683
+        this.coapServer.listen(5683, () => {
+            callback && callback();
+        });
+    }
 
     // Call this method to discover all devices in the network and get their descriptions
     discoverDevices(callback) {
-        callback && callback(null, dummyDesc);
+        this.logger && this.logger('Send CoAP multicast request for discovery');
+        const req = coap.request({
+            host: '224.0.1.187',
+            //port: 5683,
+            method: 'GET',
+            pathname: '/cit/s',
+            multicast: true,
+            multicastTimeout: 500
+        });
+/*        req.on('response', (res) => {
+            this.logger && this.logger('multicast response');
+            res.pipe(process.stdout);
+            res.on('end', () => {
+                console.log(res.options);
+                console.log(res.payload);
+            });
+        });*/
+        req.end();
+        callback && callback();
     }
 
     // call this at the end to end listening for updates
     stopListening(callback) {
-        if (this.testEmitter) {
-            clearInterval(this.testEmitter);
-            this.testEmitter = null;
+        if (this.coapServer) {
+            this.coapServer.close();
+            this.coapServer = null;
+            this.emit('disconnect');
         }
-        callback && process.nextTick(() => callback(null));
+        callback && callback(null);
     }
 
     // call this with a device ID to get the description
-    getDeviceDescription(device, callback) {
-        if (dummyDesc[device] && dummyDesc[device].description) {
-            callback && process.nextTick(() => callback(null, dummyDesc[device].description));
-            return;
+    getDeviceDescription(deviceId, callback, retryCounter) {
+        let ip;
+        if (!retryCounter) retryCounter = 0;
+        if (retryCounter > 2) {
+            return callback && callback(new Error('timeout on response'));
         }
-        callback && callback(new Error('device unknown'));
+        if (deviceId.includes('#')) {
+            if (!this.knownDevices[deviceId] || !this.knownDevices[deviceId].ip) {
+                return callback && callback('device unknown');
+            }
+            ip = this.knownDevices[deviceId].ip;
+        }
+        else ip = deviceId;
+        this.logger && this.logger('CoAP device description request for ' + deviceId + ' to ' + ip + '(' + retryCounter + ')');
+        let retryTimeout = null;
+        try {
+            const req = coap.request({
+                host: ip,
+                //port: 5683,
+                method: 'GET',
+                pathname: '/cit/d'
+            });
+
+            retryTimeout = setTimeout(() => {
+                this.getDeviceDescription(deviceId, callback, ++retryCounter);
+                callback = null;
+            }, 2000);
+            req.on('response', (res) => {
+                clearTimeout(retryTimeout);
+                const options = {};
+                res.options.forEach((opt) => {
+                    if (!options[opt.name]) {
+                        options[opt.name] = opt.value;
+                    }
+                    else {
+                        options[opt.name] += '/' + opt.value;
+                    }
+                });
+                this.logger && this.logger('CoAP response: ' + JSON.stringify(options));
+
+                const deviceId = this.initDevice(options, res.rsinfo);
+                if (!deviceId) return;
+
+                let payload = res.payload.toString();
+                if (!payload.length) {
+                    this.logger && this.logger('CoAP payload empty: ' + JSON.stringify(options));
+                    return;
+                }
+                try {
+                    payload = JSON.parse(payload);
+                }
+                catch (err) {
+                    this.emit('error', err);
+                    return;
+                }
+                this.logger && this.logger('Device description received: ' + JSON.stringify(options) + ' / ' + JSON.stringify(payload));
+                if (req.rsinfo) {
+                    this.knownDevices[deviceId].ip = req.rsinfo.address;
+                    this.knownDevices[deviceId].port = req.rsinfo.port;
+                }
+                this.knownDevices[deviceId].description = payload;
+                callback && callback(null, deviceId, payload, this.knownDevices[deviceId].ip);
+                callback = null;
+                return;
+            });
+
+            req.end();
+        }
+        catch (e) {
+            if (retryTimeout) clearTimeout(retryTimeout);
+            callback && callback(e);
+            callback = null;
+        }
     }
 
     // call this with a device ID to get the data for one device
-    getDeviceStatus(device, callback) {
-        console.log(device);
-        if (dummyData[device]) {
-            callback && process.nextTick(() => callback(null, dummyData[device]));
-            return;
+    getDeviceStatus(deviceId, callback, retryCounter) {
+        let ip;
+        if (!retryCounter) retryCounter = 0;
+        if (retryCounter > 2) {
+            return callback && callback(new Error('timeout on response'));
         }
-        callback && callback(new Error('no data'));
+        if (deviceId.includes('#')) {
+            if (!this.knownDevices[deviceId] || !this.knownDevices[deviceId].ip) {
+                return callback && callback('device unknown');
+            }
+            ip = this.knownDevices[deviceId].ip;
+        }
+        else ip = deviceId;
+        this.logger && this.logger('CoAP device status request for ' + deviceId + ' to ' + ip + '(' + retryCounter + ')');
+
+        let retryTimeout = null;
+        try {
+            const req = coap.request({
+                host: ip,
+                method: 'GET',
+                pathname: '/cit/s',
+            });
+
+            retryTimeout = setTimeout(() => {
+                this.getDeviceStatus(deviceId, callback, ++retryCounter);
+                callback = null;
+            }, 2000);
+            req.on('response', (res) => {
+                clearTimeout(retryTimeout);
+                this.handleDeviceStatus(res, (deviceId, payload) => {
+                    return callback && callback(null, deviceId, payload, this.knownDevices[deviceId].ip);
+                });
+            });
+
+            req.end();
+        }
+        catch (e) {
+            if (retryTimeout) clearTimeout(retryTimeout);
+            callback && callback(e);
+            callback = null;
+        }
     }
 
     // call this with a list of device IDs to request device updates as events
@@ -634,11 +293,66 @@ class ShellyIot extends EventEmitter {
         if (!Array.isArray(devices)) {
             return false;
         }
-        devices.forEach((device) => {
-            this.emit('update-device-status', device, dummyData[device]);
+        devices.forEach((deviceId) => {
+            this.getDeviceStatus(deviceId, (err, deviceId, data, ip) => {
+                if (err) return;
+                this.emit('update-device-status', deviceId, data);
+            });
         });
     }
 
+
+    controlDevice(deviceId, path, params, callback) {
+        if (typeof params === 'function') {
+            callback = params;
+            params = {};
+        }
+        if (!this.knownDevices[deviceId] || !this.knownDevices[deviceId].ip) {
+            return callback && callback('device unknown');
+        }
+        this.doGet('http://' + this.knownDevices[deviceId].ip + path, params, (data, response) => {
+            if (data && response.statusCOde === 200) {
+                this.logger && this.logger('REST Response ' + JSON.stringify(data));
+                return callback && callback(null, data);
+            }
+            callback && callback(data);
+        });
+    }
+
+
+    doGet(url, parameters, callback) {
+        if (typeof parameters === 'function') {
+            callback = parameters;
+            parameters = undefined;
+        }
+        var data = {
+            'parameters':    parameters,
+            'requestConfig': {
+                'timeout':   1000, //request timeout in milliseconds
+                'noDelay':   true, //Enable/disable the Nagle algorithm
+                'keepAlive': false //Enable/disable keep-alive functionalityidle socket.
+                //keepAliveDelay: 1000 //and optionally set the initial delay before the first keepalive probe is sent
+            },
+            'responseConfig': {
+                'timeout': 1000 //response timeout
+            }
+        };
+        this.logger && this.logger('Call REST GET ' + url + ' with ' + JSON.stringify(parameters));
+        var req = this.restClient.get(url, data, callback);
+        req.on('error', function (err) {
+            if (err.code) {
+                err = err.code;
+            }
+            else if (err.message) {
+                err = err.message;
+            }
+            else {
+                err = err.toString();
+            }
+
+            callback(new Error('Error while communicating with Shelly device: ' + err));
+        });
+    }
 }
 
 module.exports = ShellyIot;
