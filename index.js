@@ -94,6 +94,10 @@ class ShellyIot extends EventEmitter {
             return;
         }
         try {
+            this.logger && this.logger(payload);
+            const invalidIndex = payload.search(/[^ -~]/);
+            if (invalidIndex !== -1) payload = payload.substr(0, invalidIndex);
+            this.logger && this.logger('CoAP payload cutted: ' + invalidIndex);
             payload = JSON.parse(payload);
         }
         catch (err) {
@@ -227,6 +231,10 @@ class ShellyIot extends EventEmitter {
                     return;
                 }
                 try {
+                    this.logger && this.logger(payload);
+                    const invalidIndex = payload.search(/[^ -~]/);
+                    if (invalidIndex !== -1) payload = payload.substr(0, invalidIndex);
+                    this.logger && this.logger('CoAP payload cutted: ' + invalidIndex);
                     payload = JSON.parse(payload);
                 }
                 catch (err) {
