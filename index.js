@@ -325,7 +325,7 @@ class ShellyIot extends EventEmitter {
         }
         else ip = deviceId;
         this.doGet('http://' + ip + path, params, (data, response) => {
-            if (data && response.statusCode === 200) {
+            if (data && response && response.statusCode === 200) {
                 this.logger && this.logger('REST Response ' + JSON.stringify(data));
                 return callback && callback(null, data);
             }
