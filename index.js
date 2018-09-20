@@ -50,7 +50,16 @@ class ShellyIot extends EventEmitter {
                 'description': null
             };
         }
-        if (options['3412']) this.knownDevices[deviceId].validity = options['3412'];
+        if (options['3412']) {
+            options['3412'] = parseInt(options['3412'], 10);
+            const scaler = options['3412'] & 1;
+            if (scaler === 0) {
+                this.knownDevices[deviceId].validity = Math.floor(options['3412'] / 10);
+            }
+            else {
+                this.knownDevices[deviceId].validity = options['3412'] * 4;
+            }
+        }
 
         if (rsinfo) {
             this.knownDevices[deviceId].ip = rsinfo.address;
