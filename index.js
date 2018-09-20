@@ -178,7 +178,7 @@ class ShellyIot extends EventEmitter {
             this.coapServer = null;
             this.emit('disconnect');
         }
-        callback && callback(null);
+        callback && callback();
     }
 
     // call this with a device ID to get the description
