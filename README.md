@@ -89,7 +89,8 @@ The library also offers a index-dummy.js which offers the same interface then th
 
 ## Todo
 * add example code
-* docs
+* add proper deep testing (maybe using mock-dgram?)
+* more detailed docs?
 
 ## Changelog
 
