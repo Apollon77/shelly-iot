@@ -88,6 +88,8 @@ class ShellyIot extends EventEmitter {
             return;
         }
 
+        this.knownDevices[deviceId].online = true;
+
         let payload = req.payload.toString();
         if (!payload.length) {
             this.logger && this.logger('CoAP payload empty: ' + JSON.stringify(options));
@@ -109,6 +111,7 @@ class ShellyIot extends EventEmitter {
 
         if (this.knownDevices[deviceId].description && options['3420'] && options['3420'] === this.knownDevices[deviceId].lastSerial) {
             this.logger && this.logger('CoAP data ignored: ' + JSON.stringify(options) + ' / ' + JSON.stringify(payload));
+            if (!this.knownDevices[deviceId].online) this.emit('device-connection-status', deviceId, true);
             return;
         }
         if (options['3420']) this.knownDevices[deviceId].lastSerial = options['3420'];
@@ -117,8 +120,6 @@ class ShellyIot extends EventEmitter {
             clearTimeout(this.knownDevices[deviceId].offlineTimer);
             this.knownDevices[deviceId].offlineTimer = null;
         }
-
-        this.knownDevices[deviceId].online = true;
 
         this.knownDevices[deviceId].offlineTimer = setTimeout(() => {
             this.knownDevices[deviceId].online = false;

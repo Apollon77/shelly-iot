@@ -94,5 +94,8 @@ The library also offers a index-dummy.js which offers the same interface then th
 
 ## Changelog
 
+### v0.1.1 (2018.09.22)
+* small fix for better online status handling
+
 ### v0.1.0 (2018.09.20)
 * initial version
