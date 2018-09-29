@@ -22,7 +22,12 @@ class ShellyIot extends EventEmitter {
         this.options = options || {};
         this.logger = this.options.logger;
 
-        this.restClient = new RestClient();
+        const restOptions = {};
+        if (options.user && options.password) {
+            restOptions.user = options.user;
+            restOptions.password = options.password;
+        }
+        this.restClient = new RestClient(restOptions);
 
 
         coap.registerOption('Uri-Path', (str) => Buffer.from(str, 'ascii'), (buf) => buf.toString());
