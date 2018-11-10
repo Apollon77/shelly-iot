@@ -32,7 +32,7 @@ tbd
 ### ShellyIot(options)
 Constructor to init the object. In options you can provide:
 * "logger" to be used for debug logging.
-* "user" and "password" for Shelly devices with authentication activated. It is assumed that all devices use same credentials 
+* "user" and "password" for Shelly devices with authentication activated. It is assumed that all devices use same credentials
 
 ### listen(callback)
 Starts listening for CoAP packages in the network. Callback is called without parameters after listening started.
@@ -95,6 +95,9 @@ The library also offers a index-dummy.js which offers the same interface then th
 * more detailed docs?
 
 ## Changelog
+
+### v1.0.0 (2018.11.10)
+* fix online flag
 
 ### v0.2.0 (2018.09.29)
 * add option to also handle password protected shelly devices on REST calls

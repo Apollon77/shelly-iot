@@ -1,6 +1,7 @@
 os:
   - linux
   - osx
+  - windows
 language: node_js
 node_js:
   - '4'
@@ -8,21 +9,8 @@ node_js:
   - '8'
   - '10'
 before_install:
-  - 'if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then export export CXX=g++-4.8; fi'
-  - git clone -b build-windows --single-branch https://github.com/Apollon77/libmbus.git libmbus && cp config.h libmbus/config.h
   - 'if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter; fi'
   - 'if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then chmod +x ./cc-test-reporter; fi'
   - 'if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./cc-test-reporter before-build; fi'
-  - 'if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update; fi'
-  - 'if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install socat; fi'
-install:
-  - npm install --debug
 after_success:
-  - 'if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT -r 22e3e060ccffa9ceda43fcdcca5445251fe4f93cf4a98547a76f7897a6b1b877; fi'
-addons:
-  apt:
-    sources:
-      - ubuntu-toolchain-r-test
-    packages:
-      - g++-4.8
-      - socat
+  - 'if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT -r 9d0304926977298664206dc5a9cb8e9fa1c9343e47d89f03d0ce5c657cb11444; fi'
