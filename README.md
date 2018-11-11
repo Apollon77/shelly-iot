@@ -96,6 +96,9 @@ The library also offers a index-dummy.js which offers the same interface then th
 
 ## Changelog
 
+### v1.0.1 (2018.11.11)
+* fix online flag, finally
+
 ### v1.0.0 (2018.11.10)
 * fix online flag
 
