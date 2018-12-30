@@ -126,7 +126,7 @@ class ShellyIot extends EventEmitter {
             this.emit('device-connection-status', deviceId, false);
         }, this.knownDevices[deviceId].validity * 1000);
 
-        if (this.knownDevices[deviceId].description && options['3420'] && options['3420'] === this.knownDevices[deviceId].lastSerial && JSON.stringify(this.knownDevices[deviceId].lastPayload) === JSON.stringify(payload) {
+        if (this.knownDevices[deviceId].description && options['3420'] && options['3420'] === this.knownDevices[deviceId].lastSerial && JSON.stringify(this.knownDevices[deviceId].lastPayload) === JSON.stringify(payload)) {
             this.logger && this.logger('CoAP data ignored: ' + JSON.stringify(options) + ' / ' + JSON.stringify(payload));
             if (!lastOnlineStatus) this.emit('device-connection-status', deviceId, true);
             return;
