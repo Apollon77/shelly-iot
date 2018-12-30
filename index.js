@@ -47,7 +47,6 @@ class ShellyIot extends EventEmitter {
         if (!this.knownDevices[deviceId]) {
             this.knownDevices[deviceId] = {
                 'validity': 0,
-                'lastSerial': 0,
                 'lastPayload': null,
                 'offlineTimer': null,
                 'online': false,
@@ -98,6 +97,7 @@ class ShellyIot extends EventEmitter {
         this.knownDevices[deviceId].online = true;
 
         let payload = req.payload.toString();
+        let payloadstr;
 
         if (!payload.length) {
             this.logger && this.logger('CoAP payload empty: ' + JSON.stringify(options));
@@ -110,6 +110,7 @@ class ShellyIot extends EventEmitter {
                 payload = payload.substr(0, invalidIndex);
                 this.logger && this.logger('CoAP payload cutted: ' + invalidIndex);
             }
+            payloadstr = payload;
             payload = JSON.parse(payload);
         }
         catch (err) {
@@ -127,14 +128,12 @@ class ShellyIot extends EventEmitter {
             this.emit('device-connection-status', deviceId, false);
         }, this.knownDevices[deviceId].validity * 1000);
 
-        const payloadstr = JSON.stringify(payload);
-        if (this.knownDevices[deviceId].description && options['3420'] && options['3420'] === this.knownDevices[deviceId].lastSerial && this.knownDevices[deviceId].lastPayload === payloadstr) {
-            this.logger && this.logger('CoAP data ignored: ' + JSON.stringify(options) + ' / ' + JSON.stringify(payload));
+        if (this.knownDevices[deviceId].description && options['3420'] && this.knownDevices[deviceId].lastPayload === payloadstr) {
+            this.logger && this.logger('CoAP data ignored: ' + JSON.stringify(options) + ' / ' + payloadstr);
             if (!lastOnlineStatus) this.emit('device-connection-status', deviceId, true);
             return;
         }
         if (options['3420']) {
-            this.knownDevices[deviceId].lastSerial = options['3420'];
             this.knownDevices[deviceId].lastPayload = payloadstr;
         }
 
