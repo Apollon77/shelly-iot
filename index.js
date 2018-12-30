@@ -48,6 +48,7 @@ class ShellyIot extends EventEmitter {
             this.knownDevices[deviceId] = {
                 'validity': 0,
                 'lastSerial': 0,
+                'lastPayload': null,
                 'offlineTimer': null,
                 'online': false,
                 'ip': '',
@@ -97,6 +98,7 @@ class ShellyIot extends EventEmitter {
         this.knownDevices[deviceId].online = true;
 
         let payload = req.payload.toString();
+
         if (!payload.length) {
             this.logger && this.logger('CoAP payload empty: ' + JSON.stringify(options));
             return;
@@ -125,12 +127,16 @@ class ShellyIot extends EventEmitter {
             this.emit('device-connection-status', deviceId, false);
         }, this.knownDevices[deviceId].validity * 1000);
 
-        if (this.knownDevices[deviceId].description && options['3420'] && options['3420'] === this.knownDevices[deviceId].lastSerial) {
+        const payloadstr = JSON.stringify(payload);
+        if (this.knownDevices[deviceId].description && options['3420'] && options['3420'] === this.knownDevices[deviceId].lastSerial && this.knownDevices[deviceId].lastPayload === payloadstr) {
             this.logger && this.logger('CoAP data ignored: ' + JSON.stringify(options) + ' / ' + JSON.stringify(payload));
             if (!lastOnlineStatus) this.emit('device-connection-status', deviceId, true);
             return;
         }
-        if (options['3420']) this.knownDevices[deviceId].lastSerial = options['3420'];
+        if (options['3420']) {
+            this.knownDevices[deviceId].lastSerial = options['3420'];
+            this.knownDevices[deviceId].lastPayload = payloadstr;
+        }
 
         this.logger && this.logger('CoAP status package received: ' + JSON.stringify(options) + ' / ' + JSON.stringify(payload));
         if (emit) this.emit('update-device-status', deviceId, payload);
@@ -140,7 +146,7 @@ class ShellyIot extends EventEmitter {
 
     listen(callback) {
         this.coapServer = coap.createServer({
-        	multicastAddress: '224.0.1.187'
+            multicastAddress: '224.0.1.187'
         });
 
         this.coapServer.on('request', (req, res) => {
@@ -168,14 +174,14 @@ class ShellyIot extends EventEmitter {
             multicast: true,
             multicastTimeout: 500
         });
-/*        req.on('response', (res) => {
-            this.logger && this.logger('multicast response');
-            res.pipe(process.stdout);
-            res.on('end', () => {
-                console.log(res.options);
-                console.log(res.payload);
-            });
-        });*/
+        /*        req.on('response', (res) => {
+                    this.logger && this.logger('multicast response');
+                    res.pipe(process.stdout);
+                    res.on('end', () => {
+                        console.log(res.options);
+                        console.log(res.payload);
+                    });
+                });*/
         req.end();
         callback && callback();
     }
@@ -359,10 +365,10 @@ class ShellyIot extends EventEmitter {
             parameters = undefined;
         }
         var data = {
-            'parameters':    parameters,
+            'parameters': parameters,
             'requestConfig': {
-                'timeout':   1000, //request timeout in milliseconds
-                'noDelay':   true, //Enable/disable the Nagle algorithm
+                'timeout': 1000, //request timeout in milliseconds
+                'noDelay': true, //Enable/disable the Nagle algorithm
                 'keepAlive': false //Enable/disable keep-alive functionalityidle socket.
                 //keepAliveDelay: 1000 //and optionally set the initial delay before the first keepalive probe is sent
             },
