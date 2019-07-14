@@ -96,6 +96,9 @@ The library also offers a index-dummy.js which offers the same interface then th
 
 ## Changelog
 
+### v1.0.3 (2019.07.14)
+* also emit device status update when IP has changed
+
 ### v1.0.2 (2018.12.30)
 * check if payload is identical. Work around for Shelly H&T with equal serial numbers in messages with new payload 
 

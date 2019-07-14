@@ -1,6 +1,6 @@
 {
     "name": "shelly-iot",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "Library to communicate with Shelly.io devices",
     "keywords": [
         "shelly"
