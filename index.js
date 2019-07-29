@@ -188,6 +188,10 @@ class ShellyIot extends EventEmitter {
                         console.log(res.payload);
                     });
                 });*/
+        req.on('error',  (error) => {
+            // console.log(error);
+            this.emit('error', error);
+        });
         req.end();
         callback && callback();
     }
@@ -274,7 +278,10 @@ class ShellyIot extends EventEmitter {
                 callback = null;
                 return;
             });
-
+            req.on('error',  (error) => {
+                // console.log(error);
+                this.emit('Error ', error);
+            });
             req.end();
         }
         catch (e) {
@@ -318,7 +325,10 @@ class ShellyIot extends EventEmitter {
                     return callback && callback(null, deviceId, payload, this.knownDevices[deviceId].ip);
                 });
             });
-
+            req.on('error',  (error) => {
+                // console.log(error);
+                callback && callback(error);
+            });
             req.end();
         }
         catch (e) {
