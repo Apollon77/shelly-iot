@@ -107,17 +107,18 @@ class ShellyIot extends EventEmitter {
             return;
         }
         try {
-            const invalidIndex = payload.search(/[^ -~]/);
-            if (invalidIndex !== -1) {
-                this.logger && this.logger(payload);
-                payload = payload.substr(0, invalidIndex);
-                this.logger && this.logger('CoAP payload cutted: ' + invalidIndex);
-            }
+			
+			if (payload.indexOf('`') !== -1) {
+				this.logger && this.logger(payload);
+				payload = payload.substr(0, payload.lastIndexOf('`'));
+				this.logger && this.logger('CoAP payload cutted: ' + invalidIndex);
+			}
+			
             payloadstr = payload;
             payload = JSON.parse(payload);
         }
         catch (err) {
-            this.emit('error', err + ' for JSON ' + payload);
+            this.emit('error', err + ' (req) for JSON ' + payload);
             return;
         }
 
@@ -252,16 +253,17 @@ class ShellyIot extends EventEmitter {
                     return;
                 }
                 try {
-                    const invalidIndex = payload.search(/[^ -~]/);
-                    if (invalidIndex !== -1) {
+					
+                    if (payload.indexOf('`') !== -1) {
                         this.logger && this.logger(payload);
-                        payload = payload.substr(0, invalidIndex);
+                        payload = payload.substr(0, payload.lastIndexOf('`'));
                         this.logger && this.logger('CoAP payload cutted: ' + invalidIndex);
                     }
+					
                     payload = JSON.parse(payload);
                 }
                 catch (err) {
-                    this.emit('error', err + ' for JSON ' + payload);
+                    this.emit('error', err + ' (res) for JSON ' + payload);
                     return;
                 }
                 this.logger && this.logger('Device description received: ' + JSON.stringify(options) + ' / ' + JSON.stringify(payload));
