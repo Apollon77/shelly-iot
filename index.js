@@ -111,7 +111,7 @@ class ShellyIot extends EventEmitter {
 			if (payload.indexOf('`') !== -1) {
 				this.logger && this.logger(payload);
 				payload = payload.substr(0, payload.lastIndexOf('`'));
-				this.logger && this.logger('CoAP payload cutted: ' + invalidIndex);
+				this.logger && this.logger('CoAP payload cutted: ' + payload.indexOf('`'));
 			}
 			
             payloadstr = payload;
@@ -257,7 +257,7 @@ class ShellyIot extends EventEmitter {
                     if (payload.indexOf('`') !== -1) {
                         this.logger && this.logger(payload);
                         payload = payload.substr(0, payload.lastIndexOf('`'));
-                        this.logger && this.logger('CoAP payload cutted: ' + invalidIndex);
+                        this.logger && this.logger('CoAP payload cutted: ' + payload.indexOf('`'));
                     }
 					
                     payload = JSON.parse(payload);
