@@ -172,24 +172,32 @@ class ShellyIot extends EventEmitter {
     // Call this method to discover all devices in the network and get their descriptions
     discoverDevices(callback) {
         this.logger && this.logger('Send CoAP multicast request for discovery');
-        const req = coap.request({
-            host: '224.0.1.187',
-            //port: 5683,
-            method: 'GET',
-            pathname: '/cit/s',
-            multicast: true,
-            multicastTimeout: 500
-        });
-        /*        req.on('response', (res) => {
-                    this.logger && this.logger('multicast response');
-                    res.pipe(process.stdout);
-                    res.on('end', () => {
-                        console.log(res.options);
-                        console.log(res.payload);
-                    });
-                });*/
-        req.end();
-        callback && callback();
+        try {
+            const req = coap.request({
+                host: '224.0.1.187',
+                //port: 5683,
+                method: 'GET',
+                pathname: '/cit/s',
+                multicast: true,
+                multicastTimeout: 500
+            });
+            /*        req.on('response', (res) => {
+                        this.logger && this.logger('multicast response');
+                        res.pipe(process.stdout);
+                        res.on('end', () => {
+                            console.log(res.options);
+                            console.log(res.payload);
+                        });
+                    });*/
+            req.on('error', (error) => {
+                // console.log(error);
+                this.emit('error', error);
+            });
+            req.end();
+            callback && callback();
+        } catch (e) {
+            this.emit('error', e);
+        }
     }
 
     // call this at the end to end listening for updates
@@ -274,7 +282,10 @@ class ShellyIot extends EventEmitter {
                 callback = null;
                 return;
             });
-
+            req.on('error', (error) => {
+                // console.log(error);
+                this.emit('error', error);
+            });
             req.end();
         }
         catch (e) {
@@ -318,7 +329,10 @@ class ShellyIot extends EventEmitter {
                     return callback && callback(null, deviceId, payload, this.knownDevices[deviceId].ip);
                 });
             });
-
+            req.on('error', (error) => {
+                // console.log(error);
+                callback && callback(error);
+            });
             req.end();
         }
         catch (e) {
