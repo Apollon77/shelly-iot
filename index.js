@@ -40,7 +40,7 @@ class ShellyIot extends EventEmitter {
         this.coapServer = null;
     }
 
-    correctPayload(payload) {
+    correctPayloadString(payload) {
         try {
             payload = payload.toString();
             let index = payload.lastIndexOf('}');
@@ -49,6 +49,20 @@ class ShellyIot extends EventEmitter {
         } catch (error) {
             return '';
         }
+    }
+
+    correctPayload(payloadString) {
+        let index = payloadString.lastIndexOf('}');
+        if (index > 0) {
+            try {
+                payloadString = payloadString.substring(0, index + 1);
+                let payloadTest = JSON.parse(payloadString);
+            } catch (error) {
+                this.logger && this.logger('CoAP payload Error try to coorec');
+                correctPayload(payloadString.substring(0, index))
+            }
+        }
+        return payloadString; // nicht zu korrigieren, wir geben Ursprung zurück
     }
 
     initDevice(options, rsinfo) {
@@ -110,8 +124,8 @@ class ShellyIot extends EventEmitter {
         const lastOnlineStatus = this.knownDevices[deviceId].online;
         this.knownDevices[deviceId].online = true;
 
-        // let payload = req.payload.toString();
-        let payload = this.correctPayload(req.payload);
+        let payload = req.payload.toString();
+        payload = this.correctPayload(payload);
         let payloadstr;
 
         if (!payload.length) {
