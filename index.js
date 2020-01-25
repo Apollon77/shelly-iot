@@ -40,6 +40,17 @@ class ShellyIot extends EventEmitter {
         this.coapServer = null;
     }
 
+    correctPayload(payload) {
+        try {
+            payload = payload.toString();
+            let index = payload.lastIndexOf('}');
+            payload = payload.substring(0, index + 1);
+            return payload;
+        } catch (error) {
+            return '';
+        }
+    }
+
     initDevice(options, rsinfo) {
         const deviceId = options['3332'];
         if (!deviceId) return null;
@@ -99,7 +110,8 @@ class ShellyIot extends EventEmitter {
         const lastOnlineStatus = this.knownDevices[deviceId].online;
         this.knownDevices[deviceId].online = true;
 
-        let payload = req.payload.toString();
+        // let payload = req.payload.toString();
+        let payload = this.correctPayload(req.payload);
         let payloadstr;
 
         if (!payload.length) {
@@ -107,13 +119,13 @@ class ShellyIot extends EventEmitter {
             return;
         }
         try {
-			
-			if (payload.indexOf('`') !== -1) {
-				this.logger && this.logger(payload);
-				payload = payload.substr(0, payload.lastIndexOf('`'));
-				this.logger && this.logger('CoAP payload cutted: ' + payload.indexOf('`'));
-			}
-			
+
+            if (payload.indexOf('`') !== -1) {
+                this.logger && this.logger(payload);
+                payload = payload.substr(0, payload.lastIndexOf('`'));
+                this.logger && this.logger('CoAP payload cutted: ' + payload.indexOf('`'));
+            }
+
             payloadstr = payload;
             payload = JSON.parse(payload);
         }
@@ -261,13 +273,13 @@ class ShellyIot extends EventEmitter {
                     return;
                 }
                 try {
-					
+
                     if (payload.indexOf('`') !== -1) {
                         this.logger && this.logger(payload);
                         payload = payload.substr(0, payload.lastIndexOf('`'));
                         this.logger && this.logger('CoAP payload cutted: ' + payload.indexOf('`'));
                     }
-					
+
                     payload = JSON.parse(payload);
                 }
                 catch (err) {
