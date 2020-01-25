@@ -96,6 +96,9 @@ The library also offers a index-dummy.js which offers the same interface then th
 
 ## Changelog
 
+### v1.0.5 (2020.01.25)
+* bugfixing a npm publish error
+
 ### v1.0.4 (2019.07.29)
 * add error handling for CoAP requests
 
