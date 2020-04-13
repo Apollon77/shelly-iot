@@ -179,7 +179,8 @@ class ShellyIot extends EventEmitter {
 
     listen(callback) {
         this.coapServer = coap.createServer({
-            multicastAddress: '224.0.1.187'
+            multicastAddress: '224.0.1.187',
+            multicastInterface: this.options.multicastInterface || null
         });
 
         this.coapServer.on('request', (req, res) => {
