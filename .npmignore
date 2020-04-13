@@ -1,3 +1,6 @@
 test
 .travis.yml
 appveyor.yml
+.idea
+node_modules
+package-lock.json

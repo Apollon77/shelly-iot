@@ -191,6 +191,14 @@ class ShellyIot extends EventEmitter {
             }
         });
 
+        this.coapServer.on('error', (err) => {
+            this.emit('error', error);
+        });
+
+        this.coapServer.on('timeout', (err) => {
+            this.emit('error', error);
+        });
+
         // the default CoAP port is 5683
         this.coapServer.listen(5683, () => {
             callback && callback();

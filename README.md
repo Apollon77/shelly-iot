@@ -96,6 +96,10 @@ The library also offers a index-dummy.js which offers the same interface then th
 
 ## Changelog
 
+### v1.0.6 (2020.04.13)
+* subscribe to error and timeout event and forward as error to the library caller
+* Add option to set a specific multicast interface for COAP-server (thanks tol @SamLowrie)
+
 ### v1.0.5 (2020.01.25)
 * bugfixing a npm publish error
 

@@ -1,6 +1,6 @@
 {
     "name": "shelly-iot",
-    "version": "1.0.5",
+    "version": "1.0.6",
     "description": "Library to communicate with Shelly.io devices",
     "keywords": [
         "shelly"
@@ -29,8 +29,8 @@
         "node-rest-client": "^3.1.0"
     },
     "devDependencies": {
-        "mocha": "^7.0.0",
-        "chai": "^4.1.2",
-        "istanbul": "*"
+        "mocha": "^7.1.1",
+        "chai": "^4.2.0",
+        "istanbul": "^0.4.5"
     }
 }
