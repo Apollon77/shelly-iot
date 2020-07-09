@@ -96,7 +96,7 @@ The library also offers a index-dummy.js which offers the same interface then th
 
 ## Changelog
 
-### __WORK IN PROGRESS__
+### 1.1.0 (2020-07-09)
 IMPORTANT: This version is tested only in ths current Node.js LTS versions (10.x, 12.x, 14.x). It should still work in Node.js 8.x but no guarantees!
 
 * (Apollon77) update node-coap library to fix crashes

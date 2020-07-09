@@ -1,38 +1,38 @@
 {
-    "name": "shelly-iot",
-    "version": "1.0.6",
-    "description": "Library to communicate with Shelly.io devices",
-    "keywords": [
-        "shelly"
-    ],
-    "main": "index.js",
-    "engines": {
-        "node": ">= 4"
-    },
-    "scripts": {
-        "test": "echo 'No tests'; exit 0",
-        "release": "release-script"
-    },
-    "author": {
-        "name": "Apollon77",
-        "email": "ingo@fischer-ka.de"
-    },
-    "contributors": [
-        "Apollon77"
-    ],
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/Apollon77/shelly-iot"
-    },
-    "license": "MIT",
-    "dependencies": {
-        "coap": "^0.24.0",
-        "node-rest-client": "^3.1.0"
-    },
-    "devDependencies": {
-        "@alcalzone/release-script": "^1.6.0",
-        "mocha": "^8.0.1",
-        "chai": "^4.2.0",
-        "istanbul": "^0.4.5"
-    }
+  "name": "shelly-iot",
+  "version": "1.1.0",
+  "description": "Library to communicate with Shelly.io devices",
+  "keywords": [
+    "shelly"
+  ],
+  "main": "index.js",
+  "engines": {
+    "node": ">= 4"
+  },
+  "scripts": {
+    "test": "echo 'No tests'; exit 0",
+    "release": "release-script"
+  },
+  "author": {
+    "name": "Apollon77",
+    "email": "ingo@fischer-ka.de"
+  },
+  "contributors": [
+    "Apollon77"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Apollon77/shelly-iot"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "coap": "^0.24.0",
+    "node-rest-client": "^3.1.0"
+  },
+  "devDependencies": {
+    "@alcalzone/release-script": "^1.6.0",
+    "mocha": "^8.0.1",
+    "chai": "^4.2.0",
+    "istanbul": "^0.4.5"
+  }
 }
