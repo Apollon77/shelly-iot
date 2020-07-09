@@ -10,7 +10,8 @@
         "node": ">= 4"
     },
     "scripts": {
-        "test": "echo 'No tests'; exit 0"
+        "test": "echo 'No tests'; exit 0",
+        "release": "release-script"
     },
     "author": {
         "name": "Apollon77",
@@ -25,11 +26,12 @@
     },
     "license": "MIT",
     "dependencies": {
-        "coap": "^0.23.1",
+        "coap": "^0.24.0",
         "node-rest-client": "^3.1.0"
     },
     "devDependencies": {
-        "mocha": "^7.1.1",
+        "@alcalzone/release-script": "^1.6.0",
+        "mocha": "^8.0.1",
         "chai": "^4.2.0",
         "istanbul": "^0.4.5"
     }
