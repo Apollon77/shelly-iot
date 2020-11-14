@@ -96,7 +96,7 @@ The library also offers a index-dummy.js which offers the same interface then th
 
 ## Changelog
 
-### __WORK IN PROGRESS__
+### 1.1.1 (2020-11-14)
 * (Apollon77) fix errors
 
 ### 1.1.0 (2020-07-09)
