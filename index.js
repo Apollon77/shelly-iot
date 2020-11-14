@@ -192,11 +192,11 @@ class ShellyIot extends EventEmitter {
         });
 
         this.coapServer.on('error', (err) => {
-            this.emit('error', error);
+            this.emit('error', err);
         });
 
         this.coapServer.on('timeout', (err) => {
-            this.emit('error', error);
+            this.emit('error', err);
         });
 
         // the default CoAP port is 5683
@@ -317,7 +317,6 @@ class ShellyIot extends EventEmitter {
                 this.knownDevices[deviceId].description = payload;
                 callback && callback(null, deviceId, payload, this.knownDevices[deviceId].ip);
                 callback = null;
-                return;
             });
             req.on('error', (error) => {
                 // console.log(error);
@@ -385,7 +384,7 @@ class ShellyIot extends EventEmitter {
             return false;
         }
         devices.forEach((deviceId) => {
-            this.getDeviceStatus(deviceId, (err, deviceId, data, ip) => {
+            this.getDeviceStatus(deviceId, (err, deviceId, data, _ip) => {
                 if (err) return;
                 this.emit('update-device-status', deviceId, data);
             });
@@ -421,7 +420,7 @@ class ShellyIot extends EventEmitter {
             callback = parameters;
             parameters = undefined;
         }
-        var data = {
+        const data = {
             'parameters': parameters,
             'requestConfig': {
                 'timeout': 1000, //request timeout in milliseconds
@@ -434,7 +433,7 @@ class ShellyIot extends EventEmitter {
             }
         };
         this.logger && this.logger('Call REST GET ' + url + ' with ' + JSON.stringify(parameters));
-        var req = this.restClient.get(url, data, callback);
+        const req = this.restClient.get(url, data, callback);
         req.on('error', function (err) {
             if (err.code) {
                 err = err.code;
