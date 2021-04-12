@@ -1,5 +1,4 @@
 # shelly-iot
-[![Greenkeeper badge](https://badges.greenkeeper.io/Apollon77/shelly-iot.svg)](https://greenkeeper.io/)
 [![NPM version](http://img.shields.io/npm/v/shelly-iot.svg)](https://www.npmjs.com/package/shelly-iot)
 [![Downloads](https://img.shields.io/npm/dm/shelly-iot.svg)](https://www.npmjs.com/package/shelly-iot)
 [![Dependency Status](https://gemnasium.com/badges/github.com/Apollon77/shelly-iot.svg)](https://gemnasium.com/github.com/Apollon77/shelly-iot)
