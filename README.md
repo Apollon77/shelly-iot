@@ -95,6 +95,9 @@ The library also offers a index-dummy.js which offers the same interface then th
 
 ## Changelog
 
+### __WORK IN PROGRESS__
+* (Apollon77) Update node-coap dep
+
 ### 1.1.1 (2020-11-14)
 * (Apollon77) fix errors
 
