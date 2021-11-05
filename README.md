@@ -94,8 +94,7 @@ The library also offers a index-dummy.js which offers the same interface then th
 * more detailed docs?
 
 ## Changelog
-
-### __WORK IN PROGRESS__
+### 1.1.2 (2021-11-05)
 * (Apollon77) Update node-coap dep
 
 ### 1.1.1 (2020-11-14)
@@ -120,7 +119,7 @@ IMPORTANT: This version is tested only in the current Node.js LTS versions (10.x
 * also emit device status update when IP has changed
 
 ### v1.0.2 (2018.12.30)
-* check if payload is identical. Work around for Shelly H&T with equal serial numbers in messages with new payload 
+* check if payload is identical. Work around for Shelly H&T with equal serial numbers in messages with new payload
 
 ### v1.0.1 (2018.11.11)
 * fix online flag, finally
